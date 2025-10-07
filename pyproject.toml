@@ -12,7 +12,10 @@ dependencies = [
     "uvicorn (>=0.37.0,<0.38.0)",
     "faker (>=37.8.0,<38.0.0)",
     "python-dotenv (>=1.1.1,<2.0.0)",
-    "httpx (>=0.28.1,<0.29.0)"
+    "httpx (>=0.28.1,<0.29.0)",
+    "sqlalchemy (>=2.0.43,<3.0.0)",
+    "aiosqlite (>=0.21.0,<0.22.0)",
+    "pydantic-settings (>=2.11.0,<3.0.0)"
 ]
 
 [build-system]
