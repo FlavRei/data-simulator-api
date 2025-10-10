@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from src.core.database import Base
-import datetime
 
 class Delivery(Base):
     __tablename__ = "deliveries"
@@ -13,7 +12,6 @@ class Delivery(Base):
     delay_min = Column(String, nullable=True)
     status = Column(String, nullable=True)
 
-    # Relations
     carrier_id = Column(Integer, ForeignKey("carriers.id"))
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
     origin_id = Column(Integer, ForeignKey("warehouses.id"))

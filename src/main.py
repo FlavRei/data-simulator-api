@@ -6,7 +6,6 @@ from src.api.routes import deliveries, vehicles, carriers, warehouses, simulatio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # create DB tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield

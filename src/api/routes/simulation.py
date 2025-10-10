@@ -7,7 +7,6 @@ router = APIRouter(prefix="/simulate", tags=["Simulation"])
 
 @router.post("/")
 async def simulate_all(db: AsyncSession = Depends(get_db), carriers: int = 5, vehicles: int = 15, warehouses: int = 10, deliveries: int = 50):
-    # Génération des données liées
     carriers_list = generate_carriers(carriers)
     vehicles_list = generate_vehicles(carriers_list, vehicles)
     warehouses_list = generate_warehouses(warehouses)
