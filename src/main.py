@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.core.config import settings
 from src.core.database import engine, Base
-from src.api.routes import deliveries, vehicles, carriers, warehouses, simulation
+from src.api.routes import deliveries, vehicles, carriers, warehouses, simulation, reset
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,3 +17,4 @@ app.include_router(vehicles.router)
 app.include_router(carriers.router)
 app.include_router(warehouses.router)
 app.include_router(simulation.router)
+app.include_router(reset.router)
