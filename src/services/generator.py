@@ -1,44 +1,65 @@
 from faker import Faker
 import random
-from datetime import datetime, timedelta
+from src.models.carrier import Carrier
+from src.models.delivery import Delivery
+from src.models.vehicle import Vehicle
+from src.models.warehouse import Warehouse
 from src.services.corruption import corrupt_value
 
 fake = Faker()
-FREQ_CARRIERS = ["DHL", "FedEx", "UPS", "Chronopost", "Mondial Relay"]
 
-def _random_departure():
-    # random datetime in last 14 days or next 2 days
-    start = datetime.now() - timedelta(days=14)
-    end = datetime.now() + timedelta(days=2)
-    return fake.date_time_between(start_date=start, end_date=end)
+def generate_carriers(n=5):
+    carriers = []
+    for _ in range(n):
+        c = Carrier(
+            name=corrupt_value(random.choice(["DHL", "FedEx", "UPS", "Chronopost", "Mondial Relay"])),
+            country=corrupt_value(fake.country()),
+            rating=corrupt_value(round(random.uniform(1, 5), 0))
+        )
+        carriers.append(c)
+    return carriers
 
-def generate_delivery():
-    """Génère une livraison, en retournant un dict prêt pour l'ORM."""
-    # simulated realistic distance and occasional missing/invalid
-    distance = round(random.uniform(5, 1500), 2)
-    # generate delay with heavier probability for on_time
-    status = random.choices(["on_time", "delayed", "cancelled", ""], weights=[0.7, 0.22, 0.05, 0.03])[0]
-    delay = None
-    if status == "delayed":
-        delay = random.choice([5, 10, 15, 30, 60, 120, 240])
-    elif status == "on_time":
-        delay = 0 if random.random() > 0.95 else None
+def generate_vehicles(carriers, n=15):
+    vehicles = []
+    for _ in range(n):
+        carrier = random.choice(carriers) if carriers else None
+        v = Vehicle(
+            registration_number=corrupt_value(fake.license_plate()),
+            type=corrupt_value(random.choice(["truck", "van", "trailer", None, ""])),
+            capacity_tons=corrupt_value(random.randint(2, 40)),
+            carrier=carrier
+        )
+        vehicles.append(v)
+    return vehicles
 
-    carrier = random.choice(FREQ_CARRIERS)
-    origin = fake.city()
-    destination = fake.city()
+def generate_warehouses(n=10):
+    warehouses = []
+    for _ in range(n):
+        w = Warehouse(
+            name=corrupt_value(f"{fake.city()} Warehouse"),
+            city=corrupt_value(fake.city()),
+            country=corrupt_value(fake.country()),
+            capacity=corrupt_value(random.randint(100, 1000))
+        )
+        warehouses.append(w)
+    return warehouses
 
-    delivery = {
-        "delivery_id": fake.uuid4(),
-        "origin": corrupt_value(origin),
-        "destination": corrupt_value(destination),
-        "departure_time": _random_departure(),
-        "distance_km": distance if random.random() > 0.02 else None,  # 2% missing
-        "delay_min": delay,
-        "status": corrupt_value(status),
-        "carrier": corrupt_value(carrier),
-    }
-    return delivery
+def generate_deliveries(vehicles, warehouses, n=50):
+    deliveries = []
+    for _ in range(n):
+        vehicle = random.choice(vehicles) if vehicles else None
+        carrier = vehicle.carrier if vehicle else None
+        origin, destination = random.sample(warehouses, 2) if len(warehouses) >= 2 else (None, None)
 
-def generate_deliveries_batch(n: int = 10):
-    return [generate_delivery() for _ in range(n)]
+        d = Delivery(
+            delivery_id=corrupt_value(fake.uuid4()),
+            distance_km=corrupt_value(round(random.uniform(5, 20000), 2)),
+            delay_min=corrupt_value(random.choice([None, 0, 15, 30, 45, 60, 90, 120, "unknown"])),
+            status=corrupt_value(random.choice(["on_time", "delayed", "cancelled", "", None, 404])),
+            carrier=carrier,
+            vehicle=vehicle,
+            origin_warehouse=origin,
+            destination_warehouse=destination
+        )
+        deliveries.append(d)
+    return deliveries

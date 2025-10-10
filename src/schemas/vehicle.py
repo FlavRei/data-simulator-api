@@ -2,9 +2,9 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 class VehicleOut(BaseModel):
-    vehicle_id: str
-    plate: Optional[str]
-    model: Optional[str]
-    capacity_t: Optional[float]
+    registration_number: str
+    type: str
+    capacity_tons: int
+    carrier_id: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)
