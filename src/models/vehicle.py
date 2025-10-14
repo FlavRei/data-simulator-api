@@ -5,11 +5,11 @@ from src.core.database import Base
 class Vehicle(Base):
     __tablename__ = "vehicles"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     registration_number = Column(String, nullable=True)
     type = Column(String, nullable=True)
     capacity_tons = Column(String, nullable=True)
-    carrier_id = Column(Integer, ForeignKey("carriers.id"), nullable=False)
+    carrier_id = Column(String, ForeignKey("carriers.id"), nullable=False)
 
     carrier = relationship("Carrier", back_populates="vehicles")
     deliveries = relationship("Delivery", back_populates="vehicle")
