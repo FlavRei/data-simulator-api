@@ -56,9 +56,10 @@ def generate_deliveries(vehicles, warehouses, n=50):
         d = Delivery(
             id=fake.uuid4(),
             departure_time=corrupt_value(fake.date_time_between(start_date='-30d', end_date='now').isoformat()),
+            arrival_time=corrupt_value(fake.date_time_between(start_date='now', end_date='+30d').isoformat()),
             quantity_tons=corrupt_value(random.randint(1, 40)),
             distance_km=corrupt_value(round(random.uniform(5, 20000), 2)),
-            delay_min=corrupt_value(random.choice([None, 0, 15, 30, 45, 60, 90, 120, "unknown"])),
+            delay_days=corrupt_value(random.choice([None, 0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 14, 17, 21, "unknown"])),
             status=corrupt_value(random.choice(["on_time", "delayed", "cancelled", "", None, 404])),
             carrier=carrier,
             vehicle=vehicle,

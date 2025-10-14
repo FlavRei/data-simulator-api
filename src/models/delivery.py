@@ -7,9 +7,10 @@ class Delivery(Base):
 
     id = Column(String, primary_key=True, index=True)
     departure_time = Column(String, nullable=True)
+    arrival_time = Column(String, nullable=True)
     quantity_tons = Column(String, nullable=True)
     distance_km = Column(String, nullable=True)
-    delay_min = Column(String, nullable=True)
+    delay_days = Column(String, nullable=True)
     status = Column(String, nullable=True)
 
     carrier_id = Column(String, ForeignKey("carriers.id"))
